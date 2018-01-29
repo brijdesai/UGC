@@ -1,5 +1,6 @@
 package in.dailyhunt.ugc.Activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
@@ -17,6 +18,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import in.dailyhunt.ugc.R;
 import in.dailyhunt.ugc.Utilities.GifImageView;
 import in.dailyhunt.ugc.Utilities.Pair;
@@ -24,6 +28,7 @@ import in.dailyhunt.ugc.Utilities.Uploader;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -45,8 +50,11 @@ public class AddPostActivity extends AppCompatActivity {
 
     private EditText tags;
     private String tagsToBeSent;
-    private String contentUrl = "http://10.42.0.40/taggify-laravel/public/user_contents";
+    private String mediaUrl = "http://10.42.0.40/taggify-laravel/public/user_contents";
     private ArrayList<Pair> mediaData;
+    private String response = "";
+    private int responseCode;
+    private int userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,25 +66,7 @@ public class AddPostActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-
-//        try {
-//            final Uploader uploader = new Uploader();
-//            new Thread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    try {
-////                                Uploader.sendGet();
-//                        Log.d("HERE","HERE");
-//                        uploader.uploadFile("", "hii");
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }).start();
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        userId = getIntent().getIntExtra("userId", 0);
 
         picture = findViewById(in.dailyhunt.ugc.R.id.picture);
         gif = (GifImageView) findViewById(in.dailyhunt.ugc.R.id.gif);
@@ -164,7 +154,7 @@ public class AddPostActivity extends AppCompatActivity {
             case REQUEST_TAKE_PHOTO: {
 
                 try {
-                    Log.d("Taking Photo","Photo captured");
+                    Log.d("Taking Photo", "Photo captured");
                 } catch (Exception e) {
                     Toast.makeText(this, "Something went wrong while launching camera", Toast.LENGTH_SHORT)
                             .show();
@@ -240,9 +230,29 @@ public class AddPostActivity extends AppCompatActivity {
 
                 Log.d("Tags sent", tagsToBeSent);
 
-                makeUploadRequest();
+                final ProgressDialog progressDialog = new ProgressDialog(AddPostActivity.this,
+                        R.style.AppTheme_Dark_Dialog);
+                progressDialog.setIndeterminate(true);
+                progressDialog.setMessage("Uploading pic...");
+                progressDialog.show();
 
-                finish();
+                makeUploadRequest();
+                parseJson();
+
+                new android.os.Handler().postDelayed(
+                        new Runnable() {
+                            public void run() {
+                                if (responseCode == HttpURLConnection.HTTP_OK) {
+                                    Toast.makeText(getApplicationContext(), "Media uploaded successfully", Toast.LENGTH_SHORT).show();
+                                    progressDialog.dismiss();
+                                    finish();
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "Failed to upload media", Toast.LENGTH_SHORT).show();
+                                    progressDialog.dismiss();
+                                }
+                            }
+                        }, 1000);
+                break;
             }
 
             case android.R.id.home: {
@@ -254,18 +264,30 @@ public class AddPostActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void parseJson() {
+        // Parse response json string
+        try {
+            JSONObject jsonObject = new JSONObject(response);
+            responseCode = jsonObject.getInt("status");
+            Log.d("JSON", "Response code : " + responseCode);
+            Log.d("Response", response);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void makeUploadRequest() {
 
         mediaData = new ArrayList<>();
-        mediaData.add(new Pair("user_id",1+""));
-        mediaData.add(new Pair("tags",tagsToBeSent));
-        mediaData.add(new Pair("content",new File(currentMediaPath)));
+        mediaData.add(new Pair("user_id", userId + ""));
+        mediaData.add(new Pair("tags", tagsToBeSent));
+        mediaData.add(new Pair("content", new File(currentMediaPath)));
 
         Thread uploadThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    Uploader.sendPostRequest(contentUrl, mediaData);
+                    response = Uploader.sendPostRequest(mediaUrl, mediaData);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

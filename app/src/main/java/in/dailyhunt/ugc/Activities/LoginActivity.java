@@ -67,13 +67,13 @@ public class LoginActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_SIGNUP) {
             if (resultCode == RESULT_OK) {
-                Log.d("Registration", "Back from signup and loggning in");
+                Log.d("Registration", "Registration successful");
 
                 // By default we just finish the Activity and log them in automatically
-                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                startActivity(intent);
-
-                this.finish();
+//                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+//                startActivity(intent);
+//
+//                this.finish();
             }
         }
 
@@ -94,6 +94,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
         makeLoginRequest();
+        
         parseJson();
 
         new android.os.Handler().postDelayed(

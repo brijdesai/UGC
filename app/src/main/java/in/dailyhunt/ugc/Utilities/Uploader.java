@@ -44,7 +44,7 @@ public class Uploader extends AppCompatActivity {
     }
 
     // HTTP GET request
-    public String sendGet(String url) throws Exception {
+    public static String sendGetRequest(String url) throws Exception {
 
         URL obj = new URL(url);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();

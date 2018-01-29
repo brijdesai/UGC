@@ -19,4 +19,5 @@
     <string name="fullname_empty">At least 3 characters</string>
     <string name="login">Login</string>
     <string name="signup">Sign Up</string>
+    <string name="package_name">in.dailyhunt.ugc</string>
 </resources>
