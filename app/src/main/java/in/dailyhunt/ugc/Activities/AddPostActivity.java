@@ -19,11 +19,13 @@ import android.widget.Toast;
 
 import in.dailyhunt.ugc.R;
 import in.dailyhunt.ugc.Utilities.GifImageView;
+import in.dailyhunt.ugc.Utilities.Pair;
 import in.dailyhunt.ugc.Utilities.Uploader;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.StringTokenizer;
 
@@ -43,7 +45,8 @@ public class AddPostActivity extends AppCompatActivity {
 
     private EditText tags;
     private String tagsToBeSent;
-    private boolean isFileUploaded = false;
+    private String contentUrl = "http://10.42.0.40/taggify-laravel/public/user_contents";
+    private ArrayList<Pair> mediaData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -161,7 +164,7 @@ public class AddPostActivity extends AppCompatActivity {
             case REQUEST_TAKE_PHOTO: {
 
                 try {
-                    ;
+                    Log.d("Taking Photo","Photo captured");
                 } catch (Exception e) {
                     Toast.makeText(this, "Something went wrong while launching camera", Toast.LENGTH_SHORT)
                             .show();
@@ -189,7 +192,7 @@ public class AddPostActivity extends AppCompatActivity {
 
                 } catch (Exception e) {
                     Toast.makeText(this, "You haven't picked Image",
-                            Toast.LENGTH_LONG).show();
+                            Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
                 break;
@@ -237,17 +240,9 @@ public class AddPostActivity extends AppCompatActivity {
 
                 Log.d("Tags sent", tagsToBeSent);
 
-//                isFileUploaded=false;
-                sendMedia();
+                makeUploadRequest();
+
                 finish();
-/*
-                if(isFileUploaded) {
-                    Toast.makeText(this, "Media uploaded successfully", Toast.LENGTH_SHORT).show();
-                    finish();
-                }
-                else
-                    Toast.makeText(this, "Upload Failed", Toast.LENGTH_SHORT).show();*/
-                break;
             }
 
             case android.R.id.home: {
@@ -259,19 +254,31 @@ public class AddPostActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void sendMedia() {
-        final Uploader uploader = new Uploader();
-        new Thread(new Runnable() {
+    private void makeUploadRequest() {
+
+        mediaData = new ArrayList<>();
+        mediaData.add(new Pair("user_id",1+""));
+        mediaData.add(new Pair("tags",tagsToBeSent));
+        mediaData.add(new Pair("content",new File(currentMediaPath)));
+
+        Thread uploadThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    uploader.uploadFile(currentMediaPath, tagsToBeSent);
-                    isFileUploaded=true;
+                    Uploader.sendPostRequest(contentUrl, mediaData);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-        }).start();
+        });
+
+        uploadThread.start();
+
+        try {
+            uploadThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private String parseTags() {

@@ -11,4 +11,12 @@
     <string name="tag_hint">#tag1 #tag2 #tag3</string>
     <string name="add_new_post">Add new post</string>
     <string name="back">Back</string>
+
+    <string name="email_err" >Enter a valid email address</string>
+    <string name="password_empty" >Enter password</string>
+    <string name="password_err" >Enter a password between 4 and 15 alphanumeric characters</string>
+    <string name="repassword_err">Password does not match</string>
+    <string name="fullname_empty">At least 3 characters</string>
+    <string name="login">Login</string>
+    <string name="signup">Sign Up</string>
 </resources>

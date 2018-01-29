@@ -8,25 +8,31 @@
         <item name="colorAccent">@android:color/holo_red_light</item>
         <!--<item name="android:buttonStyle">@style/Widget.Button</item>-->
     </style>
+<!--
 
     <style name="Widget.Button" parent="Widget.Button">
         <item name="android:textAllCaps">false</item>
     </style>
+-->
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="TagEditText">
-
+    <style name="LoginTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <!--<style name="TagEditText">-->
-        <!--<item name="android:layout_margin">5dp</item>-->
-        <!--<item name="textBackgroundRadius">3dp</item>-->
-        <!--<item name="textBackgroundColor">@android:color/holo_blue_light</item>-->
-        <!--<item name="textSize">5sp</item>-->
-    <!--</style>-->
+    <style name="AppTheme_Dark_Dialog" parent="Theme.AppCompat.Dialog" >
+
+        <item name="colorAccent">#81d9f9</item>
+        <item name="android:textColor">#81d9f9</item>
+        <item name="android:background">#ffffff</item>
+
+    </style>
 
 </resources>

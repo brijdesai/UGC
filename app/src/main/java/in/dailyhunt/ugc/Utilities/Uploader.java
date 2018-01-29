@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 import in.dailyhunt.ugc.Activities.AddPostActivity;
 
@@ -22,10 +23,28 @@ public class Uploader extends AppCompatActivity {
 
     private static final String USER_AGENT = "Mozilla/5.0";
 
-    // HTTP GET request
-    public static void sendGet() throws Exception {
+    private static final String charset = "UTF-8";
 
-        String url = "http://10.42.0.40/taggify-laravel/public/test_vision_api";
+    // HTTP POST request
+    public static String sendPostRequest(String url,ArrayList<Pair> data) throws IOException {
+
+        MultipartUtility multipart = new MultipartUtility(url, charset);
+
+        for(Pair currPair : data)
+        {
+            if(currPair.getValue()!=null)
+                multipart.addFormField(currPair.getKey(),currPair.getValue());
+            else if(currPair.getFile()!=null)
+                multipart.addFilePart(currPair.getKey(),currPair.getFile());
+        }
+
+
+
+        return multipart.finish();      //returns response from server;
+    }
+
+    // HTTP GET request
+    public String sendGet(String url) throws Exception {
 
         URL obj = new URL(url);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
@@ -35,44 +54,24 @@ public class Uploader extends AppCompatActivity {
 
         //add request header
         con.setRequestProperty("User-Agent", USER_AGENT);
-
-
         int responseCode = con.getResponseCode();
-
-        Log.d("Uploader", responseCode + "");
-//        System.out.println("\nSending 'GET' request to URL : " + url);
-//        System.out.println("Response Code : " + responseCode);
 
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(con.getInputStream()));
         String inputLine;
-        StringBuffer response = new StringBuffer();
+        StringBuffer responseBuffer = new StringBuffer();
 
         while ((inputLine = in.readLine()) != null) {
-            response.append(inputLine);
+            responseBuffer.append(inputLine);
         }
         in.close();
 
-        Log.d("Response", response.toString());
+        String response = responseBuffer.toString();
 
+        Log.d("GET REQUEST", "Response Code : "+responseCode);
+        Log.d("GET REQUEST", "Response : "+response);
 
+        return response;
     }
 
-
-    public void uploadFile(String file_path,String tags) throws IOException {
-        String charset = "UTF-8";
-        String requestURL = "http://10.42.0.40/taggify-laravel/public/user_contents";
-//        String requestURL = "http://10.42.0.40/taggify-laravel/public/login";
-
-        MultipartUtility multipart = new MultipartUtility(requestURL, charset);
-        Log.d("Filename",file_path);
-
-
-        multipart.addFormField("user_id",1+"");
-        multipart.addFormField("tags",tags);
-        multipart.addFilePart("content", new File(file_path));
-
-        String response = multipart.finish(); // response from server.
-        Log.d("RESPONSE",response);
-    }
 }

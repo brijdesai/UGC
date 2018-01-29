@@ -14,6 +14,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 
+import in.dailyhunt.ugc.Response;
+
 /**
  * Created by brij on 28/1/18.
  */
@@ -128,27 +130,32 @@ public class MultipartUtility {
      * @throws IOException
      */
     public String finish() throws IOException {
-        StringBuffer response = new StringBuffer();
+        StringBuffer responseBuffer = new StringBuffer();
 
         writer.append(LINE_FEED).flush();
         writer.append("--" + boundary + "--").append(LINE_FEED);
         writer.close();
 
         // checks server's status code first
-        int status = httpConn.getResponseCode();
-        if (status == HttpURLConnection.HTTP_OK) {
+        int responseCode = httpConn.getResponseCode();
+        if (responseCode == HttpURLConnection.HTTP_OK) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(
                     httpConn.getInputStream()));
             String line = null;
             while ((line = reader.readLine()) != null) {
-                response.append(line);
+                responseBuffer.append(line);
             }
             reader.close();
             httpConn.disconnect();
         } else {
-            throw new IOException("Server returned non-OK status: " + status);
+            throw new IOException("Server returned non-OK status: " + responseCode);
         }
 
-        return response.toString();
+        String response = responseBuffer.toString();
+
+        Log.d("POST REQUEST", "Response Code : "+responseCode);
+        Log.d("POST REQUEST", "Response : "+response);
+
+        return response;
     }
 }

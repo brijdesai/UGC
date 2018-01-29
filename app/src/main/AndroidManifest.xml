@@ -18,6 +18,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="in.dailyhunt.ugcApp"
@@ -28,14 +29,22 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity
-            android:name=".Activities.HomeActivity">
-
+        <activity android:name="in.dailyhunt.ugc.Activities.LoginActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <activity android:name=".Activities.SignupActivity"
+            android:label="@string/signup"
+            android:theme="@style/Theme.AppCompat.Light">
+        </activity>
+
+
+
+        <activity android:name=".Activities.HomeActivity">
 
         </activity>
 
