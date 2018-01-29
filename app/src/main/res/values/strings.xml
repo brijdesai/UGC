@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">UGC</string>
+
+
+    <string name="title_home">Home</string>
+    <string name="title_profile">My Profile</string>
+    <string name="title_upload">Upload Photo/GIF</string>
+
+
+    <string name="choose_option">Choose an option</string>
+    <string name="tag_hint">#tag1 #tag2 #tag3</string>
+    <string name="add_new_post">Add new post</string>
+    <string name="back">Back</string>
 </resources>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="upload_array">
+        <item>Take a photo</item>
+        <item>Choose photo from Gallary</item>
+        <item>Choose gif from Gallary</item>
+    </string-array>
+
+
+</resources>

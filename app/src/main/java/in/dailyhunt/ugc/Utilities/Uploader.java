@@ -2,6 +2,7 @@ package in.dailyhunt.ugc.Utilities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -9,6 +10,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import in.dailyhunt.ugc.Activities.AddPostActivity;
 
 /**
  * Created by brij on 28/1/18.
@@ -58,11 +61,14 @@ public class Uploader extends AppCompatActivity {
 
     public void uploadFile(String file_path,String tags) throws IOException {
         String charset = "UTF-8";
-        String requestURL = "http://10.42.0.40/taggify-laravel/public/test_vision_api";
+        String requestURL = "http://10.42.0.40/taggify-laravel/public/user_contents";
+//        String requestURL = "http://10.42.0.40/taggify-laravel/public/login";
 
         MultipartUtility multipart = new MultipartUtility(requestURL, charset);
         Log.d("Filename",file_path);
 
+
+        multipart.addFormField("user_id",1+"");
         multipart.addFormField("tags",tags);
         multipart.addFilePart("content", new File(file_path));
 
