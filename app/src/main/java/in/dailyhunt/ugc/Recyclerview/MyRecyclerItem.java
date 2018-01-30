@@ -49,10 +49,8 @@ public class MyRecyclerItem extends RecyclerView.ViewHolder {
     public void updateView(Post item, int position) throws IOException {
 
         currentMediaPath = item.getLocation();
+        Log.d("current path",currentMediaPath);
         String tag = item.getTags();
-        Log.d("displaying item image", "image is fetching");
-
-//        new DownLoadImageTask(img).execute(imgurl);
 
         tags.setText(tag);
         setAppropriateView();
@@ -73,43 +71,5 @@ public class MyRecyclerItem extends RecyclerView.ViewHolder {
             gif.setVisibility(gif.VISIBLE);
         }
     }
-
-
-    /*private class DownLoadImageTask extends AsyncTask<String, Void, Bitmap> {
-        ImageView imageView;
-
-        public DownLoadImageTask(ImageView imageView) {
-            this.imageView = imageView;
-        }
-
-        *//*
-            doInBackground(Params... params)
-                Override this method to perform a computation on a background thread.
-         *//*
-        protected Bitmap doInBackground(String... urls) {
-            String urlOfImage = urls[0];
-            Bitmap logo = null;
-            try {
-
-                InputStream is = new URL(urlOfImage).openStream();
-                *//*
-                    decodeStream(InputStream is)
-                        Decode an input stream into a bitmap.
-                 *//*
-                logo = BitmapFactory.decodeStream(is);
-            } catch (Exception e) { // Catch the download exception
-                e.printStackTrace();
-            }
-            return logo;
-        }
-
-        *//*
-            onPostExecute(Result result)
-                Runs on the UI thread after doInBackground(Params...).
-         *//*
-        protected void onPostExecute(Bitmap result) {
-            imageView.setImageBitmap(result);
-        }
-    }*/
 
 }

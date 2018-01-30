@@ -1,5 +1,6 @@
 package in.dailyhunt.ugc.Activities;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
@@ -144,7 +145,6 @@ public class AddPostActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode != RESULT_OK)
             return;
@@ -239,12 +239,20 @@ public class AddPostActivity extends AppCompatActivity {
                 makeUploadRequest();
                 parseJson();
 
+
+
                 new android.os.Handler().postDelayed(
                         new Runnable() {
                             public void run() {
                                 if (responseCode == HttpURLConnection.HTTP_OK) {
                                     Toast.makeText(getApplicationContext(), "Media uploaded successfully", Toast.LENGTH_SHORT).show();
                                     progressDialog.dismiss();
+                                    Intent data = new Intent();
+                                    if (getParent() == null) {
+                                        setResult(Activity.RESULT_OK, data);
+                                    } else {
+                                        getParent().setResult(Activity.RESULT_OK, data);
+                                    }
                                     finish();
                                 } else {
                                     Toast.makeText(getApplicationContext(), "Failed to upload media", Toast.LENGTH_SHORT).show();

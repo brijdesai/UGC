@@ -142,7 +142,7 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     public void onSignupSuccess() {
-        _signupbtn.setEnabled(false);
+        _signupbtn.setEnabled(true);
         Toast.makeText(this, "Registered Successfully", Toast.LENGTH_SHORT).show();
         setResult(RESULT_OK, null);
         finish();

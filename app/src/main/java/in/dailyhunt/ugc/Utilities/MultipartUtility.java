@@ -14,7 +14,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 
-import in.dailyhunt.ugc.Response;
 
 /**
  * Created by brij on 28/1/18.

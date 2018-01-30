@@ -8,23 +8,11 @@
         <item name="colorAccent">@android:color/holo_red_light</item>
         <!--<item name="android:buttonStyle">@style/Widget.Button</item>-->
     </style>
-<!--
 
-    <style name="Widget.Button" parent="Widget.Button">
-        <item name="android:textAllCaps">false</item>
-    </style>
--->
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-    </style>
-
-    <style name="LoginTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
     </style>
 
     <style name="AppTheme_Dark_Dialog" parent="Theme.AppCompat.Dialog" >

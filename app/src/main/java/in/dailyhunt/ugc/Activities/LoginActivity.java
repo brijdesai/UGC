@@ -154,14 +154,13 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void onLoginSuccess() {
-        _loginbutton.setEnabled(false);
+        _loginbutton.setEnabled(true);
 
         Toast.makeText(getApplicationContext(), "Logged in successfully", Toast.LENGTH_SHORT).show();
 
         Intent intent  = new Intent(LoginActivity.this,HomeActivity.class);
         intent.putExtra("userId",userId);
         startActivity(intent);
-        finish();
     }
 
     public void onLoginFailed() {
