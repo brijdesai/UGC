@@ -21,10 +21,12 @@
 
     </android.support.design.widget.BottomNavigationView>
 
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list"
         android:layout_width="0dp"
         android:layout_height="400dp"
+        android:scrollbars="vertical"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"

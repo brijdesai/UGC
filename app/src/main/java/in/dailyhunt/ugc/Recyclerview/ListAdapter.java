@@ -1,5 +1,6 @@
 package in.dailyhunt.ugc.Recyclerview;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,23 +16,26 @@ import in.dailyhunt.ugc.Utilities.Post;
  * Created by pinal on 29/1/18.
  */
 
-public class ListAdapter extends RecyclerView.Adapter<MyRecyclerItem> {
+public class ListAdapter extends RecyclerView.Adapter<PostCardView> {
+    private final Context context;
     private List<Post> listItems;
-    public ListAdapter(List<Post> items){
-        this.listItems=items;
+
+    public ListAdapter(List<Post> items, Context con) {
+        this.listItems = items;
+        this.context = con;
     }
 
 
     @Override
-    public MyRecyclerItem onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item, parent,false);
-        return new MyRecyclerItem(view);
+    public PostCardView onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_media_item, parent, false);
+        return new PostCardView(view);
     }
 
     @Override
-    public void onBindViewHolder(MyRecyclerItem holder, int position) {
+    public void onBindViewHolder(PostCardView holder, int position) {
         try {
-            holder.updateView(listItems.get(position),position);
+            holder.updateView(listItems.get(position), position, context);
         } catch (IOException e) {
             e.printStackTrace();
         }

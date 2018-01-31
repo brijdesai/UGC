@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -19,11 +18,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import in.dailyhunt.ugc.R;
-import in.dailyhunt.ugc.Utilities.GifImageView;
 import in.dailyhunt.ugc.Utilities.Pair;
 import in.dailyhunt.ugc.Utilities.Uploader;
 import in.dailyhunt.ugc.Utilities.UtilProperties;
@@ -39,8 +39,7 @@ import java.util.StringTokenizer;
 public class AddPostActivity extends AppCompatActivity {
 
 
-    private ImageView picture;
-    private GifImageView gif;
+    private ImageView img;
 
     private static final int REQUEST_TAKE_PHOTO = 1;
     private static final int REQUEST_LOAD_IMG = 2;
@@ -69,8 +68,7 @@ public class AddPostActivity extends AppCompatActivity {
 
         userId = getIntent().getIntExtra("userId", 0);
 
-        picture = findViewById(in.dailyhunt.ugc.R.id.picture);
-        gif = (GifImageView) findViewById(in.dailyhunt.ugc.R.id.gif);
+        img = findViewById(in.dailyhunt.ugc.R.id.picture);
         tags = findViewById(in.dailyhunt.ugc.R.id.tag);
 
 
@@ -82,24 +80,16 @@ public class AddPostActivity extends AppCompatActivity {
                 dispatchTakePictureIntent();
                 break;
             }
-            case HomeActivity.CHOOSE_PHOTO_FEATURE: {
+            default:
                 Intent galleryIntent = new Intent(Intent.ACTION_PICK,
                         MediaStore.Images.Media.INTERNAL_CONTENT_URI);
                 // Start the Intent
                 startActivityForResult(galleryIntent, REQUEST_LOAD_IMG);
                 break;
-            }
-            case HomeActivity.CHOOSE_GIF_FEATURE: {
-                Intent galleryIntent = new Intent(Intent.ACTION_PICK,
-                        MediaStore.Images.Media.INTERNAL_CONTENT_URI);
-                // Start the Intent
-                startActivityForResult(galleryIntent, REQUEST_LOAD_IMG);
-                break;
-            }
-
         }
 
     }
+
 
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -155,6 +145,7 @@ public class AddPostActivity extends AppCompatActivity {
 
                 try {
                     Log.d("Taking Photo", "Photo captured");
+                    Glide.with(getApplicationContext()).load(currentMediaPath).into(img);
                 } catch (Exception e) {
                     Toast.makeText(this, "Something went wrong while launching camera", Toast.LENGTH_SHORT)
                             .show();
@@ -166,7 +157,6 @@ public class AddPostActivity extends AppCompatActivity {
             case REQUEST_LOAD_IMG: {
 
                 try {
-
                     Uri selectedImage = data.getData();
                     String[] filePathColumn = {MediaStore.Images.Media.DATA};
                     // Get the cursor
@@ -180,6 +170,8 @@ public class AddPostActivity extends AppCompatActivity {
                     currentGifUri = selectedImage;
                     currentMediaPath = imgDecodableString;
 
+                    Glide.with(getApplicationContext()).load(currentMediaPath).into(img);
+
                 } catch (Exception e) {
                     Toast.makeText(this, "You haven't picked Image",
                             Toast.LENGTH_SHORT).show();
@@ -189,24 +181,24 @@ public class AddPostActivity extends AppCompatActivity {
             }
         }
 
-        setAppropriateView();
+//        setAppropriateView();
     }
 
-    private void setAppropriateView() {
+    /*private void setAppropriateView() {
         Log.d("PATH", currentMediaPath);
         String extension = currentMediaPath.substring(currentMediaPath.lastIndexOf('.') + 1);
         extension = extension.toLowerCase();
         if (extension.equals("jpg") || extension.equals("jpeg")) {
-            picture.setImageBitmap(BitmapFactory.decodeFile(currentMediaPath));
-            picture.setVisibility(picture.VISIBLE);
+            img.setImageBitmap(BitmapFactory.decodeFile(currentMediaPath));
+            img.setVisibility(img.VISIBLE);
             gif.setVisibility(gif.INVISIBLE);
         } else {
             Log.d("GIF", "Playing gif : " + currentMediaPath);
             gif.setGifImageUri(currentGifUri);
-            picture.setVisibility(gif.INVISIBLE);
+            img.setVisibility(gif.INVISIBLE);
             gif.setVisibility(gif.VISIBLE);
         }
-    }
+    }*/
 
 
     @Override
@@ -227,7 +219,7 @@ public class AddPostActivity extends AppCompatActivity {
                     Toast.makeText(this, "Enter valid format in Tags", Toast.LENGTH_SHORT).show();
                     return false;
                 }
-
+                item.setEnabled(false);
                 Log.d("Tags sent", tagsToBeSent);
 
                 final ProgressDialog progressDialog = new ProgressDialog(AddPostActivity.this,
@@ -238,7 +230,6 @@ public class AddPostActivity extends AppCompatActivity {
 
                 makeUploadRequest();
                 parseJson();
-
 
 
                 new android.os.Handler().postDelayed(
@@ -260,6 +251,7 @@ public class AddPostActivity extends AppCompatActivity {
                                 }
                             }
                         }, 1000);
+                item.setEnabled(true);
                 break;
             }
 
@@ -295,7 +287,7 @@ public class AddPostActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    response = Uploader.sendPostRequest(UtilProperties.getProperty("uploadPostApi",getApplicationContext()), mediaData);
+                    response = Uploader.sendPostRequest(UtilProperties.getProperty("uploadPostApi", getApplicationContext()), mediaData);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
