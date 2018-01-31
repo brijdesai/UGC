@@ -14,12 +14,14 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 
 import in.dailyhunt.ugc.R;
 import in.dailyhunt.ugc.Utilities.Pair;
 import in.dailyhunt.ugc.Utilities.Uploader;
+import in.dailyhunt.ugc.Utilities.UtilProperties;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -33,7 +35,6 @@ public class LoginActivity extends AppCompatActivity {
     private String response;
     private int responseCode;
 
-    private final String loginUrl = "http://10.42.0.40/taggify-laravel/public/login";
     private ArrayList<Pair> loginData;
 
     @Override
@@ -137,7 +138,7 @@ public class LoginActivity extends AppCompatActivity {
             public void run() {
 
                 try {
-                    response=Uploader.sendPostRequest(loginUrl,loginData);
+                    response=Uploader.sendPostRequest(UtilProperties.getProperty("loginApi",getApplicationContext()),loginData);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

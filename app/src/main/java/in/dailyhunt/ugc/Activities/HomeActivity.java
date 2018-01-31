@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -21,8 +20,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.ImageView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,15 +33,13 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import in.dailyhunt.ugc.R;
 import in.dailyhunt.ugc.Recyclerview.ListAdapter;
-import in.dailyhunt.ugc.Utilities.GifImageView;
-import in.dailyhunt.ugc.Utilities.Permissions;
 import in.dailyhunt.ugc.Utilities.Post;
 import in.dailyhunt.ugc.Utilities.Uploader;
+import in.dailyhunt.ugc.Utilities.UtilProperties;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -54,9 +49,6 @@ public class HomeActivity extends AppCompatActivity {
     public static final int CHOOSE_GIF_FEATURE = 3;
 
     private String response;
-    private final String postApi = "http://10.42.0.40/taggify-laravel/public/user/";
-    private String filepath = "/storage/emulated/0/Android/data/in.dailyhunt.ugc/";
-    private final String serverDir = "http://10.42.0.40/taggify-laravel/public/storage/content/";
     private int userId;
 
     private ArrayList<Post> userPosts;
@@ -87,35 +79,41 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void showPosts() {
-        getPostsOfThisUser();
+        try{
+            getPostsOfThisUser();
 
-        Log.d("User id", userId + "");
-        Log.d("Response", response + " ");
+            Log.d("User id", userId + "");
+            Log.d("Response", response + " ");
 
-        parseResponse();
+            parseResponse();
 
-        File folder = new File(Environment.getExternalStorageDirectory() +
-                File.separator + "Android" + File.separator + "data" + File.separator, getString(R.string.package_name));
-        if (!folder.exists())
-            folder.mkdirs();
+            File folder = new File(Environment.getExternalStorageDirectory() +
+                    File.separator + "Android" + File.separator + "data" + File.separator, getString(R.string.package_name));
+            if (!folder.exists())
+                folder.mkdirs();
 
 
-        DownloadTask downloadTask;
-        File file;
-        for (Post p : userPosts) {
-            file = new File(filepath + p.getLocation());
-            if (file.exists()) {
-                p.setLocation(filepath + p.getLocation());
-                continue;
+            DownloadTask downloadTask;
+            File file;
+            for (Post p : userPosts) {
+                file = new File(UtilProperties.getProperty("savePostDir",getApplicationContext()) + p.getLocation());
+                if (file.exists()) {
+                    p.setLocation(UtilProperties.getProperty("savePostDir",getApplicationContext()) + p.getLocation());
+                    continue;
+                }
+                downloadTask = new DownloadTask(HomeActivity.this, p.getLocation());
+                downloadTask.execute(UtilProperties.getProperty("serverFetchPostDir",getApplicationContext()) + p.getLocation());
+                p.setLocation(UtilProperties.getProperty("savePostDir",getApplicationContext()) + p.getLocation());
             }
-            downloadTask = new DownloadTask(HomeActivity.this, p.getLocation());
-            downloadTask.execute(serverDir + p.getLocation());
-            p.setLocation(filepath + p.getLocation());
+
+            listAdapter = new ListAdapter(userPosts);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            recyclerView.setAdapter(listAdapter);
+        }
+        catch (Exception e){
+            e.printStackTrace();
         }
 
-        listAdapter = new ListAdapter(userPosts);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(listAdapter);
     }
 
 
@@ -207,7 +205,7 @@ public class HomeActivity extends AppCompatActivity {
         if(resultCode==RESULT_OK)
             if(requestCode==UPLOAD_MEDIA){
                     showPosts();
-                    Log.d("Here","Added successfully");
+                Log.d("Here","Added successfully");
             }
     }
 
@@ -217,7 +215,7 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    response = Uploader.sendGetRequest(postApi + userId + "?device=android");
+                    response = Uploader.sendGetRequest(UtilProperties.getProperty("userPostApi",getApplicationContext()) + userId + "?device=android");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -267,7 +265,7 @@ public class HomeActivity extends AppCompatActivity {
 
                 // download the file
                 input = connection.getInputStream();
-                output = new FileOutputStream(filepath + filename);
+                output = new FileOutputStream(UtilProperties.getProperty("savePostDir",getApplicationContext()) + filename);
 
                 byte data[] = new byte[4096];
                 long total = 0;

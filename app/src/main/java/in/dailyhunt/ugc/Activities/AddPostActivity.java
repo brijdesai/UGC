@@ -26,6 +26,7 @@ import in.dailyhunt.ugc.R;
 import in.dailyhunt.ugc.Utilities.GifImageView;
 import in.dailyhunt.ugc.Utilities.Pair;
 import in.dailyhunt.ugc.Utilities.Uploader;
+import in.dailyhunt.ugc.Utilities.UtilProperties;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,7 +52,6 @@ public class AddPostActivity extends AppCompatActivity {
 
     private EditText tags;
     private String tagsToBeSent;
-    private String mediaUrl = "http://10.42.0.40/taggify-laravel/public/user_contents";
     private ArrayList<Pair> mediaData;
     private String response = "";
     private int responseCode;
@@ -295,7 +295,7 @@ public class AddPostActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    response = Uploader.sendPostRequest(mediaUrl, mediaData);
+                    response = Uploader.sendPostRequest(UtilProperties.getProperty("uploadPostApi",getApplicationContext()), mediaData);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

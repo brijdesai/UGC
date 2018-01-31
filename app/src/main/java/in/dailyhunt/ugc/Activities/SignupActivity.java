@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import in.dailyhunt.ugc.R;
 import in.dailyhunt.ugc.Utilities.Pair;
 import in.dailyhunt.ugc.Utilities.Uploader;
+import in.dailyhunt.ugc.Utilities.UtilProperties;
 
 /**
  * Created by pinal on 28/1/18.
@@ -38,7 +39,6 @@ public class SignupActivity extends AppCompatActivity {
     private int responseCode;
     private int userId;
 
-    private final String signupUrl = "http://10.42.0.40/taggify-laravel/public/register";
     private ArrayList<Pair> signupData;
 
     @Override
@@ -111,7 +111,7 @@ public class SignupActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    response = Uploader.sendPostRequest(signupUrl,signupData);
+                    response = Uploader.sendPostRequest(UtilProperties.getProperty("signupApi",getApplicationContext()),signupData);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
