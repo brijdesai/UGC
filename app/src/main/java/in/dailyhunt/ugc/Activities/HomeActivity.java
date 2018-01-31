@@ -139,7 +139,6 @@ public class HomeActivity extends AppCompatActivity {
 
                 userPosts.add(new Post(_filename, _tags));
 
-//                Log.d("File Name",_filename);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -201,7 +200,7 @@ public class HomeActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
         if(resultCode==RESULT_OK)
             if(requestCode==UPLOAD_MEDIA){
                     showPosts();

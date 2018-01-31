@@ -126,8 +126,9 @@ public class SignupActivity extends AppCompatActivity {
         }
     }
 
+    // Parse response json string
     private void parseJson() {
-        // Parse response json string
+
         try {
             JSONObject jsonObject = new JSONObject(response);
             responseCode = jsonObject.getInt("status");

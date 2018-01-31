@@ -14,7 +14,6 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 
@@ -69,12 +68,6 @@ public class LoginActivity extends AppCompatActivity {
         if (requestCode == REQUEST_SIGNUP) {
             if (resultCode == RESULT_OK) {
                 Log.d("Registration", "Registration successful");
-
-                // By default we just finish the Activity and log them in automatically
-//                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-//                startActivity(intent);
-//
-//                this.finish();
             }
         }
 
@@ -111,8 +104,8 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    // Parse response json string
     private void parseJson() {
-        // Parse response json string
         try {
             JSONObject jsonObject = new JSONObject(response);
             responseCode = jsonObject.getInt("status");
