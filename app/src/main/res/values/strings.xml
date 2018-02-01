@@ -2,9 +2,10 @@
     <string name="app_name">#Taggify</string>
 
 
-    <string name="title_home">Home</string>
-    <string name="title_logout">Logout</string>
-    <string name="title_upload">Upload Photo/GIF</string>
+    <string name="navigation_dashboard">Dashboard</string>
+    <string name="navigation_my_posts">My Posts</string>
+    <string name="navigation_logout">Logout</string>
+    <string name="navigation_upload">Upload Photo/GIF</string>
 
 
     <string name="choose_option">Choose an option</string>

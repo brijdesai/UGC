@@ -53,7 +53,8 @@
 
         <activity
             android:name=".Activities.AddPostActivity"
-            android:hardwareAccelerated="false" android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:label="Add new Post">
         </activity>
 
     </application>

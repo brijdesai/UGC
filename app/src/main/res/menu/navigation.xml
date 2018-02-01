@@ -2,20 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/navigation_home"
+        android:id="@+id/navigation_dashboard"
         android:icon="@drawable/ic_home_black_24dp"
-        android:title="@string/title_home" />
+        android:title="@string/navigation_dashboard" />
+
 
     <item
         android:id="@+id/navigation_upload"
         android:icon="@drawable/ic_add_a_photo"
-        android:title="@string/title_upload"
-        />
-
+        android:title="@string/navigation_upload" />
 
     <item
-        android:id="@+id/navigation_logout"
-        android:icon="@drawable/ic_power_settings_new"
-        android:title="@string/title_logout" />
+        android:id="@+id/navigation_my_posts"
+        android:icon="@drawable/ic_action_user"
+        android:title="@string/navigation_my_posts" />
 
 </menu>

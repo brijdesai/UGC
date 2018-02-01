@@ -1,7 +1,9 @@
 package in.dailyhunt.ugc.Activities;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -82,25 +84,34 @@ public class LoginActivity extends AppCompatActivity {
         _loginbutton.setEnabled(false);
         final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
                 R.style.AppTheme_Dark_Dialog);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Authenticating...");
-        progressDialog.show();
 
+        new AsyncTask<Void, Void, Void>() {
 
-        makeLoginRequest();
-        
-        parseJson();
+            @Override
+            protected void onPreExecute() {
+                progressDialog.setIndeterminate(true);
+                progressDialog.setMessage("Authenticating...");
+                progressDialog.setCancelable(false);
+                progressDialog.show();
+            }
 
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        if (responseCode== HttpURLConnection.HTTP_OK)
-                            onLoginSuccess();
-                        else
-                            onLoginFailed();
-                        progressDialog.dismiss();
-                    }
-                }, 1000);
+            @Override
+            protected Void doInBackground(Void... voids) {
+                makeLoginRequest();
+                parseJson();
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                if (responseCode== HttpURLConnection.HTTP_OK)
+                    onLoginSuccess();
+                else
+                    onLoginFailed();
+                progressDialog.dismiss();
+            }
+        }.execute();
+
 
     }
 

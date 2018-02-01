@@ -12,8 +12,10 @@
         android:id="@+id/add_post_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@android:color/holo_blue_light"
+        app:titleTextColor="@color/white"
         android:layout_marginTop="8dp"
-         />
+        />
 
     <ImageView
         android:id="@+id/picture"

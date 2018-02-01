@@ -2,6 +2,7 @@ package in.dailyhunt.ugc.Activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -78,25 +79,34 @@ public class SignupActivity extends AppCompatActivity {
 
         final ProgressDialog progressDialog = new ProgressDialog(SignupActivity.this,
                 R.style.AppTheme_Dark_Dialog);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Creating Account...");
-        progressDialog.show();
 
-        makeSignupRequest();
-        parseJson();
+        new AsyncTask<Void, Void, Void>() {
 
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        // On complete call either onSignupSuccess or onSignupFailed
-                        // depending on success
-                        if (responseCode== HttpURLConnection.HTTP_OK)
-                            onSignupSuccess();
-                        else
-                            onSignupFailed();
-                        progressDialog.dismiss();
-                    }
-                }, 1000);
+            @Override
+            protected void onPreExecute() {
+                progressDialog.setIndeterminate(true);
+                progressDialog.setMessage("Registering...");
+                progressDialog.setCancelable(false);
+                progressDialog.show();
+            }
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+                makeSignupRequest();
+                parseJson();
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                if (responseCode == HttpURLConnection.HTTP_OK)
+                    onSignupSuccess();
+                else
+                    onSignupFailed();
+                progressDialog.dismiss();
+            }
+        }.execute();
+
     }
 
     private void makeSignupRequest() {

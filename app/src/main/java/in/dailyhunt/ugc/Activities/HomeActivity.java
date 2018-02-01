@@ -13,6 +13,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -37,6 +38,8 @@ public class HomeActivity extends AppCompatActivity {
     public static final int CAMERA_FEATURE = 1;
     public static final int CHOOSE_PHOTO_FEATURE = 2;
     public static final int CHOOSE_GIF_FEATURE = 3;
+    public static final int MY_POSTS = 1;
+    public static final int ALL_POSTS = 2;
 
     private String response;
     private int userId;
@@ -46,7 +49,9 @@ public class HomeActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ListAdapter listAdapter;
     private final int REQUEST_PERMISSIONS = 1;
-    private final int UPLOAD_MEDIA=2;
+    private final int UPLOAD_MEDIA = 2;
+
+    private BottomNavigationView navigation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,28 +65,31 @@ public class HomeActivity extends AppCompatActivity {
 
         userId = getIntent().getIntExtra("userId", 0);
 
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
+
         recyclerView = findViewById(R.id.list);
-        showPosts();
+
+        navigation.setSelectedItemId(R.id.navigation_dashboard);
 
     }
 
-    private void showPosts() {
-        try{
-            getPostsOfThisUser();
+    private void showPosts(int choice) {
+        try {
+            getPosts(choice);
 
             Log.d("User id", userId + "");
             Log.d("Response", response + " ");
 
             parseResponse();
 
-            listAdapter = new ListAdapter(userPosts,getApplicationContext());
+            listAdapter = new ListAdapter(userPosts, getApplicationContext());
+//            recyclerView.setLayoutManager(new LinearLayoutManager(this));
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
             recyclerView.setAdapter(listAdapter);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -99,7 +107,7 @@ public class HomeActivity extends AppCompatActivity {
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject dataObject = (JSONObject) jsonArray.get(i);
                 String _filename = dataObject.getString("file_name");
-                Log.d("parsing filename",_filename+"");
+                Log.d("parsing filename", _filename + "");
                 JSONArray tagsJsonArray = dataObject.getJSONArray("tags");
 
                 String _tags = "";
@@ -123,19 +131,22 @@ public class HomeActivity extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.navigation_home:
-                    showPosts();
+                case R.id.navigation_dashboard:
+                    setTitle("All Posts");
+                    showPosts(ALL_POSTS);
+                    return true;
+                case R.id.navigation_my_posts:
+                    setTitle("My Posts");
+                    showPosts(MY_POSTS);
                     return true;
                 case R.id.navigation_upload:
                     showDialog(1);
-                    return true;
-                case R.id.navigation_logout:
-                    finish();
                     return true;
             }
             return false;
         }
     };
+
 
     @Override
     public Dialog onCreateDialog(int id) {
@@ -161,7 +172,7 @@ public class HomeActivity extends AppCompatActivity {
                                 break;
                         }
                         intent.putExtra("userId", userId);
-                        startActivityForResult(intent,UPLOAD_MEDIA);
+                        startActivityForResult(intent, UPLOAD_MEDIA);
 
                     }
                 });
@@ -171,20 +182,25 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode==RESULT_OK)
-            if(requestCode==UPLOAD_MEDIA){
-                    showPosts();
-                Log.d("Here","Added successfully");
+        if (resultCode == RESULT_OK) {
+            if (requestCode == UPLOAD_MEDIA) {
+                Log.d("Upload media", "Added media successfully");
             }
+        }
+        navigation.setSelectedItemId(R.id.navigation_dashboard);
     }
 
-    public void getPostsOfThisUser() {
+
+    public void getPosts(final int choice) {
 
         Thread postThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    response = Uploader.sendGetRequest(UtilProperties.getProperty("userPostApi",getApplicationContext()) + userId + "?device=android");
+                    if (choice == MY_POSTS)
+                        response = Uploader.sendGetRequest(UtilProperties.getProperty("userPostApi", getApplicationContext()) + userId + "?device=android");
+                    else if (choice == ALL_POSTS)
+                        response = Uploader.sendGetRequest(UtilProperties.getProperty("allPostApi", getApplicationContext()));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -198,7 +214,6 @@ public class HomeActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
 
 
     public boolean isPermissionGranted(String permission) {
@@ -237,6 +252,5 @@ public class HomeActivity extends AppCompatActivity {
             }
         }
     }
-
 
 }

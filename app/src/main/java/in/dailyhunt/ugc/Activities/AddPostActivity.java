@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
@@ -46,8 +47,6 @@ public class AddPostActivity extends AppCompatActivity {
     private static final String AUTHORITY = "in.dailyhunt.ugcApp";
 
     private String currentMediaPath;
-
-    private Uri currentGifUri;
 
     private EditText tags;
     private String tagsToBeSent;
@@ -167,7 +166,6 @@ public class AddPostActivity extends AppCompatActivity {
                     int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                     String imgDecodableString = cursor.getString(columnIndex);
                     cursor.close();
-                    currentGifUri = selectedImage;
                     currentMediaPath = imgDecodableString;
 
                     Glide.with(getApplicationContext()).load(currentMediaPath).into(img);
@@ -181,24 +179,7 @@ public class AddPostActivity extends AppCompatActivity {
             }
         }
 
-//        setAppropriateView();
     }
-
-    /*private void setAppropriateView() {
-        Log.d("PATH", currentMediaPath);
-        String extension = currentMediaPath.substring(currentMediaPath.lastIndexOf('.') + 1);
-        extension = extension.toLowerCase();
-        if (extension.equals("jpg") || extension.equals("jpeg")) {
-            img.setImageBitmap(BitmapFactory.decodeFile(currentMediaPath));
-            img.setVisibility(img.VISIBLE);
-            gif.setVisibility(gif.INVISIBLE);
-        } else {
-            Log.d("GIF", "Playing gif : " + currentMediaPath);
-            gif.setGifImageUri(currentGifUri);
-            img.setVisibility(gif.INVISIBLE);
-            gif.setVisibility(gif.VISIBLE);
-        }
-    }*/
 
 
     @Override
@@ -224,34 +205,43 @@ public class AddPostActivity extends AppCompatActivity {
 
                 final ProgressDialog progressDialog = new ProgressDialog(AddPostActivity.this,
                         R.style.AppTheme_Dark_Dialog);
-                progressDialog.setIndeterminate(true);
-                progressDialog.setMessage("Uploading pic...");
-                progressDialog.show();
 
-                makeUploadRequest();
-                parseJson();
+                new AsyncTask<Void, Void, Void>() {
 
+                    @Override
+                    protected void onPreExecute() {
+                        progressDialog.setIndeterminate(true);
+                        progressDialog.setMessage("Uploading pic...");
+                        progressDialog.setCancelable(false);
+                        progressDialog.show();
+                    }
 
-                new android.os.Handler().postDelayed(
-                        new Runnable() {
-                            public void run() {
-                                if (responseCode == HttpURLConnection.HTTP_OK) {
-                                    Toast.makeText(getApplicationContext(), "Media uploaded successfully", Toast.LENGTH_SHORT).show();
-                                    progressDialog.dismiss();
-                                    Intent data = new Intent();
-                                    if (getParent() == null) {
-                                        setResult(Activity.RESULT_OK, data);
-                                    } else {
-                                        getParent().setResult(Activity.RESULT_OK, data);
-                                    }
-                                    finish();
-                                } else {
-                                    Toast.makeText(getApplicationContext(), "Failed to upload media", Toast.LENGTH_SHORT).show();
-                                    progressDialog.dismiss();
-                                }
+                    @Override
+                    protected Void doInBackground(Void... voids) {
+                        makeUploadRequest();
+                        parseJson();
+                        return null;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Void aVoid) {
+                        if (responseCode == HttpURLConnection.HTTP_OK) {
+                            Toast.makeText(getApplicationContext(), "Media uploaded successfully", Toast.LENGTH_SHORT).show();
+                            progressDialog.dismiss();
+                            Intent data = new Intent();
+                            if (getParent() == null) {
+                                setResult(Activity.RESULT_OK, data);
+                            } else {
+                                getParent().setResult(Activity.RESULT_OK, data);
                             }
-                        }, 1000);
-                item.setEnabled(true);
+                            finish();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Failed to upload media", Toast.LENGTH_SHORT).show();
+                            progressDialog.dismiss();
+                        }
+                    }
+                }.execute();
+
                 break;
             }
 

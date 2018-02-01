@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.io.IOException;
 
@@ -44,7 +45,8 @@ public class PostCardView extends RecyclerView.ViewHolder {
     public void updateView(Post item, int position, Context context) throws IOException {
 
         tags.setText(item.getTags());
-        Glide.with(context).load(UtilProperties.getProperty("serverFetchPostDir",context) + item.getFileName()).into(img);
+//        Glide.with(context).load(UtilProperties.getProperty("serverFetchPostDir",context) + item.getFileName()).apply(new RequestOptions().centerCrop()).into(img);
+        Glide.with(context).load(UtilProperties.getProperty("serverFetchPostDir",context) + item.getFileName()).apply(new RequestOptions()).into(img);
     }
 
 }
