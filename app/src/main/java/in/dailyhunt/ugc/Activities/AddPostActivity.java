@@ -238,10 +238,11 @@ public class AddPostActivity extends AppCompatActivity {
                         } else {
                             Toast.makeText(getApplicationContext(), "Failed to upload media", Toast.LENGTH_SHORT).show();
                             progressDialog.dismiss();
+
                         }
                     }
                 }.execute();
-
+                item.setEnabled(true);
                 break;
             }
 
